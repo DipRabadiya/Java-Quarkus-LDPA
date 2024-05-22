@@ -96,7 +96,7 @@ public class MainResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateUserDetails(User user) {
         try {
-            ldapService.updateUserDetails(user.getCn(), user.getEmployeeNumber());
+            ldapService.updateUserDetails(user.getCn(), user.getSn(), user.getPassword(), user.getEmployeeNumber());
             return Response.ok("User details updated successfully").build();
         } catch (LDAPException e) {
             LOG.error("Failed to update user details", e);

@@ -1,5 +1,6 @@
 package org.crudLDAP;
 
+
 public class User {
     private String cn;
     private String sn;

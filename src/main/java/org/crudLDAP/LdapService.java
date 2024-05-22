@@ -65,30 +65,12 @@ public class LdapService {
         }
     }
 
-    public void addUserToGroup(String username, String groupName) throws LDAPException {
-        try (LDAPConnection connection = getConnection()) {
-            ModifyRequest modifyRequest = new ModifyRequest(
-                    "cn=" + groupName + ",ou=groups,ou=system",
-                    new Modification(ModificationType.ADD, "uniqueMember", "cn=" + username + ",ou=users,ou=system")
-            );
-            connection.modify(modifyRequest);
-        }
-    }
-
-    public void deleteUserFromGroup(String username, String groupName) throws LDAPException {
-        try (LDAPConnection connection = getConnection()) {
-            ModifyRequest modifyRequest = new ModifyRequest(
-                    "cn=" + groupName + ",ou=groups,ou=system",
-                    new Modification(ModificationType.DELETE, "uniqueMember", "cn=" + username + ",ou=users,ou=system")
-            );
-            connection.modify(modifyRequest);
-        }
-    }
-
     public boolean authUser(String username, String password) {
         try (LDAPConnection connection = new LDAPConnection(ldapUrl, 10389, "cn=" + username + ",ou=users,ou=system", password)) {
+            LOG.info("User auth successfully: cn=" + username);
             return true;
         } catch (LDAPException e) {
+            LOG.error("Authentication failed for user: cn=" + username, e);
             return false;
         }
     }
@@ -99,17 +81,25 @@ public class LdapService {
                     "cn=" + username + ",ou=users,ou=system",
                     new Modification(ModificationType.REPLACE, "userPassword", password)
             );
+            LOG.info("Password updated successfully for user: cn=" + username);
             connection.modify(modifyRequest);
+
         }
     }
 
-    public void updateUserDetails(String username, String employeeNumber) throws LDAPException {
+    public void updateUserDetails(String cn, String sn, String password, String employeeNumber) throws LDAPException {
         try (LDAPConnection connection = getConnection()) {
             ModifyRequest modifyRequest = new ModifyRequest(
-                    "cn=" + username + ",ou=users,ou=system",
-                    new Modification(ModificationType.REPLACE, "employeeNumber", employeeNumber)
+                    "cn=" + cn + ",ou=users,ou=system",
+                    new Modification(ModificationType.REPLACE, "sn", sn),
+                    new Modification(ModificationType.REPLACE, "userPassword", password),
+                    new Modification(ModificationType.REPLACE, "uid", employeeNumber)
             );
             connection.modify(modifyRequest);
+            LOG.info("User details updated successfully for user: cn=" + cn);
+        }catch (LDAPException e) {
+            LOG.error("Failed to update user details for user: cn=" + cn, e);
+            throw e;
         }
     }
 
