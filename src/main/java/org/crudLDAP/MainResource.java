@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.jboss.logging.Logger;
 
 @Path("/ldap")
+@Produces(MediaType.APPLICATION_JSON)
 public class MainResource {
 
     @Inject
@@ -22,7 +23,7 @@ public class MainResource {
 
     @GET
     @Path("/users")
-    @Produces(MediaType.APPLICATION_JSON)
+//    @Produces(MediaType.APPLICATION_JSON)
     public Response getAllUsers() {
         try {
             List<SearchResultEntry> users = ldapService.getAllUsers();
@@ -34,6 +35,7 @@ public class MainResource {
                 user.setEmployeeNumber(entry.getAttributeValue("uid"));
                 return user;
             }).collect(Collectors.toList());
+            LOG.info("User retrieve successfully");
             return Response.ok(userList).build();
         } catch (LDAPException e) {
             LOG.error("Failed to retrieve users", e);
@@ -56,6 +58,7 @@ public class MainResource {
 
     @DELETE
     @Path("/user/{cn}")
+//    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteUser(@PathParam("cn") String cn) {
         try {
             ldapService.deleteUser(cn);

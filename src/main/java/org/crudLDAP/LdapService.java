@@ -19,10 +19,10 @@ public class LdapService {
     private final String bindPassword = "secret";
 
     private LDAPConnection getConnection() throws LDAPException {
-        LOG.info("Attempting to establish LDAP connection to " + ldapUrl + ":" + ldapPort);
+//        LOG.info("Attempting to establish LDAP connection to " + ldapUrl + ":" + ldapPort);
         try {
             LDAPConnection connection = new LDAPConnection(ldapUrl, ldapPort, bindDN, bindPassword);
-            LOG.info("LDAP connection established successfully.");
+//            LOG.info("LDAP connection established successfully.");
             return connection;
         } catch (LDAPException e) {
             LOG.error("Failed to establish LDAP connection: " + e.getMessage(), e);
